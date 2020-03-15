@@ -1,7 +1,8 @@
 $(document).ready(function() {
-    var myMap = L.map('mapid').setView([33.7490, 84.3880], 13);
+    var myMap = L.map('mapid').setView([33.7490, 84.3880], 12);
     var myLat, myLong;
     var myCity, myState;
+    var markers = [];
     var responseDataEl = document.getElementById("response-data");
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -23,7 +24,7 @@ $(document).ready(function() {
         var latLong = response.loc.split(",");
         myLat = parseFloat(latLong[0]);
         myLong = parseFloat(latLong[1]);
-        myMap.setView([myLat, myLong], 13);
+        myMap.setView([myLat, myLong], 12);
         $.ajax({
             url: "https://api.openbrewerydb.org/breweries",
             method: "GET",
@@ -31,7 +32,13 @@ $(document).ready(function() {
         }).then(function(response) {
             console.log(response)
             responseDataEl.textContent += `${JSON.stringify(response, null, 2)}\n`;
-            //console.log(JSON.stringify(response, null, 2));
+            for (var i=0; i < response.length; i++) {
+                // does it have lat/long?
+                if (!response[i].longitude) continue;
+                var marker = L.marker([parseFloat(response[i].latitude), parseFloat(response[i].longitude)]).addTo(myMap);
+                marker.bindPopup(`<strong>${response[i].name}</strong><br>${response[i].brewery_type}`).openPopup();
+                markers.push(marker);
+            }
         });
     });
 });
