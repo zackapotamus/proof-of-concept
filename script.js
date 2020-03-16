@@ -24,17 +24,20 @@ $(document).ready(function() {
         var latLong = response.loc.split(",");
         myLat = parseFloat(latLong[0]);
         myLong = parseFloat(latLong[1]);
+        myCity = response.city;
+        myState = response.region;
         myMap.setView([myLat, myLong], 12);
         $.ajax({
             url: "https://api.openbrewerydb.org/breweries",
             method: "GET",
-            data: {by_city: response.city, by_state: response.region, per_page: 50}
+            data: {by_city: myCity, by_state: myState, per_page: 50}
         }).then(function(response) {
-            console.log(response)
+            console.log(response);
             responseDataEl.textContent += `${JSON.stringify(response, null, 2)}\n`;
             for (var i=0; i < response.length; i++) {
                 // does it have lat/long?
                 if (!response[i].longitude) continue;
+                
                 var marker = L.marker([parseFloat(response[i].latitude), parseFloat(response[i].longitude)]).addTo(myMap);
                 marker.bindPopup(`<strong>${response[i].name}</strong><br>${response[i].brewery_type}`).openPopup();
                 markers.push(marker);
