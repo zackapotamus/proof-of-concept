@@ -55,11 +55,38 @@ class Brewery {
 
 class Profile {
     constructor(name, date_created, breweries) {
-        this.name = name;
-        this.breweries = breweries || [];
-        this.date = date_created || moment.now();
+        this._name = name;
+        this._breweries = breweries || [];
+        this._date = date_created || moment.now();
     }
-
+    get name() {
+        return this._name;
+    }
+    set name(value) {
+        this._name = value;
+    }
+    get date() {
+        return this._date;
+    }
+    set date(value) {
+        this._date = value;
+    }
+    get beverages() {
+        return this._beverages;
+    }
+    addBrewery(brewery) {
+        this._breweries.push(brewery);
+    }
+    removeBrewery(brewery_name) {
+        for (var i = 0; i < this._breweries.length; i++) {
+            if (this._breweries[i].name === brewery_name) {
+                return this._breweries.splice(i, 1);
+            }
+        }
+    }
+    removeBreweryAtIndex(index) {
+        return this._breweries.splice(index, 1);
+    }
 }
 
 $(document).ready(function() {
