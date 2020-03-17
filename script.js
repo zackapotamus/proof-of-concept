@@ -1,3 +1,67 @@
+class Beverage {
+    constructor(name, date_added, type, rating) {
+        this._name = name;
+        this._type = type || "";
+        this.rating = rating;
+        this.date = date_added || moment().now();
+    }
+    setRating(rating) {
+        this._rating = rating < 1 ? 1 : rating > 5 ? 5 : rating;
+    }
+    set rating(value) {
+        this.setRating(value);
+    }
+    get rating() {
+        return this._rating;
+    }
+    get type() {
+        return this._type;
+    }
+    set type(value) {
+        this._type = value;
+    }
+}
+
+class Brewery {
+    constructor(name, date_added, rating, beverages) {
+        this._name = name;
+        this._beverages = beverages || [];
+        this._rating = rating;
+        this.date = date_added || moment().now();
+    }
+    setRating(rating) {
+        this._rating = rating < 1 ? 1 : rating > 5 ? 5 : rating;
+    }
+    addBeverage(beverage) {
+        this._beverages.push(beverage);
+    }
+    removeBeverage(beverage_name) {
+        var ret = null;
+        for (var i = 0; i < this._beverages.length; i++) {
+            if (this._beverages[i].name === beverage_name) {
+                ret = this._beverages.splice(i, 1);
+                break;
+            }
+        }
+        return ret;
+    }
+    removeBeverageAtIndex(index) {
+        return this._beverages.splice(index, 1);
+    }
+    get beverages() {
+        return this._beverages;
+    }
+}
+
+class Profile {
+    constructor(name, date_created, breweries) {
+        this.name = name;
+        this.breweries = breweries || [];
+        this.date = date_created || moment.now();
+    }
+
+}
+
 $(document).ready(function() {
     var myMap = L.map('mapid').setView([33.7490, 84.3880], 12);
     var myLat, myLong;
@@ -37,7 +101,7 @@ $(document).ready(function() {
             for (var i=0; i < response.length; i++) {
                 // does it have lat/long?
                 if (!response[i].longitude) continue;
-                
+
                 var marker = L.marker([parseFloat(response[i].latitude), parseFloat(response[i].longitude)]).addTo(myMap);
                 marker.bindPopup(`<strong>${response[i].name}</strong><br>${response[i].brewery_type}`).openPopup();
                 markers.push(marker);
